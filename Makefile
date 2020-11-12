@@ -1,7 +1,7 @@
-BIN := /net/server
-SOURCES := /net/server.c
+BIN := net/server
+SOURCES := net/server.c
 BIN1 := net/client
-SOURCES1 := /net/client.c
+SOURCES1 := net/client.c
 CC := gcc
 .PHONY := clean
 $(BIN): $(SOURCES)
