@@ -2,7 +2,7 @@
 #define LOGIC
 
 #define FIELD_SIZE 10
-
+#define HEALTH 20
 enum orientation { gorisont, vertical };
 enum move_state { MY_MOVE = 1, ENEMY_MOVE };
 enum reply_state { DAMAGE, KILL, MISS };
@@ -27,6 +27,8 @@ struct player_message {
     int v_coord;
     int h_coord;
     int reply;
+    int health;
+
 };
 
 int is_my_move(enum move_state);

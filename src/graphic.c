@@ -128,6 +128,34 @@ void enter_coords(int *v_coord, int *h_coord) {
     refresh_screen();
 }
 
+int who_win(enum move_state state, int health) {
+    
+
+if (health == 0){
+    switch (state)
+    {
+      case MY_MOVE:
+       return 1;
+       
+       break;
+    
+          case ENEMY_MOVE:
+       return 1;
+       break;
+    
+     default:
+        break;
+    }
+
+
+}
+
+return 0;
+   
+
+}
+
+
 void mark_my_field(int x, int y, enum reply_state rep) {
     switch (rep) {
         case DAMAGE:
@@ -200,3 +228,98 @@ void clear_label() {
 
     refresh_screen();
 }
+
+void enter_coords_param(int *v_coord, int *h_coord, int *distr, int *len) {
+    int max_x, max_y;
+    char coord;
+
+    getmaxyx(stdscr, max_y, max_x);
+
+        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите вертикальную координату (0-9)");
+        refresh_screen();
+        do {
+            coord = getch();
+        } while (coord < '0' || coord > '9');
+        *v_coord = coord - '0';
+
+        move(max_y - 5, (max_x / 2) - 18);
+        clrtoeol();
+
+        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите горизонтальную координату (0-9)");
+        refresh_screen();
+        do {
+            coord = getch();
+        } while (coord < '0' || coord > '9');
+        *h_coord = coord - '0';
+
+        move(max_y - 5, (max_x / 2) - 18);
+        clrtoeol();
+
+        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите длину корабля (1-4)");
+        refresh_screen();
+        do {
+            coord = getch();
+        } while (coord < '1' || coord > '4');
+        *len = coord - '0';
+
+        move(max_y - 5, (max_x / 2) - 18);
+        clrtoeol();
+// 0 - горизонтально
+// 1 - вертикально
+        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите направление (0-1)");
+        refresh_screen();
+        do {
+            coord = getch();
+        } while (coord < '0' || coord > '1');
+        *distr = coord - '0';
+
+        move(max_y - 5, (max_x / 2) - 18);
+        clrtoeol();
+
+
+
+    refresh_screen();
+}
+
+int test_coords_param(int v_coord, int h_coord, int distr, int len, struct player *player_str ){
+
+switch (distr)
+{
+case 0:
+if ((len+v_coord) > SIZE_FIELD_Y)
+    {
+     return 3;
+    } else {
+    
+            for (int j = 1; j <= len; j++){
+                
+                if(player_str->field[v_coord][h_coord] == '*'){
+                    return 3;
+                }
+                v_coord++;
+        }
+    }
+    break;
+case 1:
+if ((len+h_coord) > SIZE_FIELD_Y)
+    {
+     return 3;
+    } else {
+    
+            for (int j = 1; j <= len; j++){
+                
+                if(player_str->field[v_coord][h_coord] == '*'){
+                    return 3;
+                }
+                h_coord++;
+                }
+         }
+
+    break;
+default:
+    break;
+}
+return distr;
+}
+
+

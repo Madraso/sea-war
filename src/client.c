@@ -38,19 +38,71 @@ int main(int argc, char *argv[]) {
 
     struct player_message msg;
     struct player player_str;
-
+    msg.health = HEALTH;
     /* Здесь должна быть генерация кораблей */
 
+
+
+    for (int i = 0; i < SIZE_FIELD_Y; i++){
+        for (int j = 0; j < SIZE_FIELD_Y; j++){
+            player_str.field[i][j] = ' ';
+        }
+    }
     init_screen();
     draw_fields();
-    place_ships(player_str.field);
+    
+    int step_to_ch = 0;
+    do{ 
 
+        int v, h, len, distr;
+        enter_coords_param(&v, &h, &distr, &len);
+
+    
+    int choice = test_coords_param(v,h,distr,len, &player_str);
+
+
+
+    switch (choice)
+    {
+    case 0:
+    
+            for (int j = 1; j <= len; j++){
+                player_str.field[v][h] = '*';
+                v++;
+                step_to_ch++;
+        }
+        place_ships(player_str.field);
+        break;
+    
+
+    case 1:
+      
+       for (int j = 1; j <= len; j++){
+       player_str.field[v][h] = '*';
+       h++;
+        step_to_ch++;
+        }
+        place_ships(player_str.field);   
+        break;
+    
+    case 3:
+
+    break;
+    
+    default:
+        break;
+    }
+
+    } while (step_to_ch < HEALTH); // Считаем, что максимальная длинна всех кораблей - 20
+
+// Тут генерация заканчивается. Потом доделаю условия для постановки кораблей
     enum move_state state;
 
     if ((player_num - '0') == 1) state = MY_MOVE;
     else if ((player_num - '0') == 2) state = ENEMY_MOVE;
-
+    int id_of_exit = 0;
     while (1) {
+       
         if (is_my_move(state)) {
             set_move_state_label(MY_MOVE);
             enter_coords(&msg.v_coord, &msg.h_coord);
@@ -69,6 +121,13 @@ int main(int argc, char *argv[]) {
 
             handle_reply(msg, &state);
 
+            id_of_exit = who_win(MY_MOVE, msg.health);
+            if (id_of_exit == 1){
+                close(sock_fd);
+                deinit_screen();
+                printf("\nYou win\n");
+                return 0;
+            }
             sleep(2);
             clear_label();
         }
@@ -85,6 +144,9 @@ int main(int argc, char *argv[]) {
             switch (player_str.field[msg.v_coord][msg.h_coord]) {
                 case '*':
                     msg.reply = DAMAGE;
+                    msg.health--;
+
+        
 
                     handle_reply(msg, &state);
 
@@ -106,7 +168,13 @@ int main(int argc, char *argv[]) {
                 perror("send");
                 exit(EXIT_FAILURE);
             }
-            
+            id_of_exit = who_win(MY_MOVE, msg.health);
+            if (id_of_exit == 1){
+                close(sock_fd);
+                deinit_screen();
+                printf("\nYou lose!\n");
+                return 0;
+            }            
             sleep(2);
             clear_label();
         }

@@ -80,4 +80,5 @@ int main(int argc, char *argv[]) {
 
     pthread_join(tid_1, NULL);
     pthread_join(tid_2, NULL);
+    close(sock_fd);
 }

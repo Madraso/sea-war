@@ -27,7 +27,9 @@ void mark_enemy_field(int, int, enum reply_state);
 int is_markered(int, int);
 void print_reply_label(enum reply_state);
 void clear_label();
-
+void enter_coords_param(int *v_coord, int *h_coord, int *distr, int *len);
+int test_coords_param(int v_coord, int h_coord, int distr, int len, struct player *player_str );
+int who_win(enum move_state state, int health);
 void draw_field(int, int, const char []);
 
 #endif
