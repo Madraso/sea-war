@@ -1,0 +1,7 @@
+language: c
+compiler: gcc
+dist: debian
+script: make
+branches:
+  only:
+  - release
