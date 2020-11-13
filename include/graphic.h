@@ -22,14 +22,15 @@ void draw_fields();
 void place_ships(char [SIZE_FIELD_Y][SIZE_FIELD_Y]);
 void set_move_state_label(enum move_state);
 void enter_coords(int *, int *);
+void enter_ship_param(struct player *, int);
 void mark_my_field(int, int, enum reply_state);
 void mark_enemy_field(int, int, enum reply_state);
 int is_markered(int, int);
 void print_reply_label(enum reply_state);
+void print_ship_length(int);
+void print_win_label();
+void print_lose_label();
 void clear_label();
-void enter_coords_param(int *v_coord, int *h_coord, int *distr, int *len);
-int test_coords_param(int v_coord, int h_coord, int distr, int len, struct player *player_str );
-int who_win(enum move_state state, int health);
 void draw_field(int, int, const char []);
 
 #endif

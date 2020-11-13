@@ -102,7 +102,6 @@ void enter_coords(int *v_coord, int *h_coord) {
     getmaxyx(stdscr, max_y, max_x);
 
     do {
-
         mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите вертикальную координату (0-9)");
         refresh_screen();
         do {
@@ -128,33 +127,46 @@ void enter_coords(int *v_coord, int *h_coord) {
     refresh_screen();
 }
 
-int who_win(enum move_state state, int health) {
-    
+void enter_ship_param(struct player *ship_inf, int ship_num) {
+    int max_x, max_y;
+    char input_data;
 
-if (health == 0){
-    switch (state)
-    {
-      case MY_MOVE:
-       return 1;
-       
-       break;
-    
-          case ENEMY_MOVE:
-       return 1;
-       break;
-    
-     default:
-        break;
-    }
+    getmaxyx(stdscr, max_y, max_x);
 
+    print_ship_length(ship_inf->boat[ship_num].length);
 
+    mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите вертикальную координату (0-9)");
+    refresh_screen();
+    do {
+        input_data = getch();
+    } while (input_data < '0' || input_data > '9');
+    ship_inf->boat[ship_num].start_y = input_data - '0';
+
+    move(max_y - 5, (max_x / 2) - 18);
+    clrtoeol();
+
+    mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите горизонтальную координату (0-9)");
+    refresh_screen();
+    do {
+        input_data = getch();
+    } while (input_data < '0' || input_data > '9');
+    ship_inf->boat[ship_num].start_x = input_data - '0';
+
+    move(max_y - 5, (max_x / 2) - 18);
+    clrtoeol();
+
+    mvaddstr(max_y - 5, (max_x / 2) - 27, "Введите направление (Горизонтальное [0], Вертикальное [1])");
+    refresh_screen();
+    do {
+        input_data = getch();
+    } while (input_data < '0' || input_data > '1');
+    ship_inf->boat[ship_num].orientation = input_data - '0';
+
+    move(max_y - 5, (max_x / 2) - 18);
+    clrtoeol();
+
+    refresh_screen();
 }
-
-return 0;
-   
-
-}
-
 
 void mark_my_field(int x, int y, enum reply_state rep) {
     switch (rep) {
@@ -217,6 +229,49 @@ void print_reply_label(enum reply_state rep) {
     refresh_screen();
 }
 
+void print_ship_length(int length) {
+    int max_x, max_y;
+
+    getmaxyx(stdscr, max_y, max_x);
+
+    switch (length) {
+        case 1:
+            mvaddstr(max_y - 7, (max_x / 2) - 10, "Однопалубный корабль");
+            break;
+        case 2:
+            mvaddstr(max_y - 7, (max_x / 2) - 10, "Двухпалубный корабль");
+            break;
+        case 3:
+            mvaddstr(max_y - 7, (max_x / 2) - 10, "Трехпалубный корабль");
+            break;
+        case 4:
+            mvaddstr(max_y - 7, (max_x / 2) - 10, "Четырехпалубный корабль");
+            break;
+    }
+
+    refresh_screen();
+}
+
+void print_win_label() {
+    int max_x, max_y;
+
+    getmaxyx(stdscr, max_y, max_x);
+
+    clear_label();
+    mvaddstr(max_y - 5, (max_x / 2) - 6, "Вы выиграли!");
+    refresh_screen();
+}
+
+void print_lose_label() {
+    int max_x, max_y;
+
+    getmaxyx(stdscr, max_y, max_x);
+
+    clear_label();
+    mvaddstr(max_y - 5, (max_x / 2) - 6, "Вы проиграли!");
+    refresh_screen();
+}
+
 void clear_label() {
     int max_y = getmaxy(stdscr);
 
@@ -228,98 +283,3 @@ void clear_label() {
 
     refresh_screen();
 }
-
-void enter_coords_param(int *v_coord, int *h_coord, int *distr, int *len) {
-    int max_x, max_y;
-    char coord;
-
-    getmaxyx(stdscr, max_y, max_x);
-
-        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите вертикальную координату (0-9)");
-        refresh_screen();
-        do {
-            coord = getch();
-        } while (coord < '0' || coord > '9');
-        *v_coord = coord - '0';
-
-        move(max_y - 5, (max_x / 2) - 18);
-        clrtoeol();
-
-        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите горизонтальную координату (0-9)");
-        refresh_screen();
-        do {
-            coord = getch();
-        } while (coord < '0' || coord > '9');
-        *h_coord = coord - '0';
-
-        move(max_y - 5, (max_x / 2) - 18);
-        clrtoeol();
-
-        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите длину корабля (1-4)");
-        refresh_screen();
-        do {
-            coord = getch();
-        } while (coord < '1' || coord > '4');
-        *len = coord - '0';
-
-        move(max_y - 5, (max_x / 2) - 18);
-        clrtoeol();
-// 0 - горизонтально
-// 1 - вертикально
-        mvaddstr(max_y - 5, (max_x / 2) - 18, "Введите направление (0-1)");
-        refresh_screen();
-        do {
-            coord = getch();
-        } while (coord < '0' || coord > '1');
-        *distr = coord - '0';
-
-        move(max_y - 5, (max_x / 2) - 18);
-        clrtoeol();
-
-
-
-    refresh_screen();
-}
-
-int test_coords_param(int v_coord, int h_coord, int distr, int len, struct player *player_str ){
-
-switch (distr)
-{
-case 0:
-if ((len+v_coord) > SIZE_FIELD_Y)
-    {
-     return 3;
-    } else {
-    
-            for (int j = 1; j <= len; j++){
-                
-                if(player_str->field[v_coord][h_coord] == '*'){
-                    return 3;
-                }
-                v_coord++;
-        }
-    }
-    break;
-case 1:
-if ((len+h_coord) > SIZE_FIELD_Y)
-    {
-     return 3;
-    } else {
-    
-            for (int j = 1; j <= len; j++){
-                
-                if(player_str->field[v_coord][h_coord] == '*'){
-                    return 3;
-                }
-                h_coord++;
-                }
-         }
-
-    break;
-default:
-    break;
-}
-return distr;
-}
-
-
