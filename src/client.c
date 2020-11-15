@@ -45,6 +45,24 @@ int main(int argc, char *argv[]) {
     init_player_str(&player_str);
     generate_ships(&player_str);
 
+    msg.reply = SHIPS_GEN;
+
+    int send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
+    if (send_status < 0) {
+        perror("send");
+        exit(EXIT_FAILURE);
+    }
+
+    print_reply_label(msg.reply);
+
+    receieve_status = recv(sock_fd, (void *) &msg, sizeof(msg), 0);
+    if (receieve_status < 0) {
+        perror("receive");
+        exit(EXIT_FAILURE);
+    }
+
+    clear_label();
+
     enum move_state state;
 
     if ((player_num - '0') == 1) state = MY_MOVE;
@@ -55,13 +73,13 @@ int main(int argc, char *argv[]) {
             set_move_state_label(MY_MOVE);
             enter_coords(&msg.v_coord, &msg.h_coord);
 
-            int send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
+            send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
             if (send_status < 0) {
                 perror("send");
                 exit(EXIT_FAILURE);
             }
 
-            int receieve_status = recv(sock_fd, (void *) &msg, sizeof(msg), 0);
+            receieve_status = recv(sock_fd, (void *) &msg, sizeof(msg), 0);
             if (receieve_status < 0) {
                 perror("receive");
                 exit(EXIT_FAILURE);
@@ -83,22 +101,30 @@ int main(int argc, char *argv[]) {
         else {
             set_move_state_label(ENEMY_MOVE);
 
-            int receieve_status = recv(sock_fd, (void *) &msg, sizeof(msg), 0);
+            receieve_status = recv(sock_fd, (void *) &msg, sizeof(msg), 0);
 
             if (receieve_status < 0) {
                 perror("receive");
                 exit(EXIT_FAILURE);
             }
 
-            switch (player_str.field[msg.v_coord][msg.h_coord]) {
-                case '*':
-                    msg.reply = DAMAGE;
-                    player_str.health--;
+            int ship_num;
 
+            switch (player_str.field[msg.v_coord][msg.h_coord].cell) {
+                case '*':
+                    ship_num = player_str.field[msg.v_coord][msg.h_coord].cell_number;
+
+                    player_str.health--;
+                    player_str.boat[ship_num].health--;
+                    
+                    if (player_str.boat[ship_num].health == 0) msg.reply = KILL;
+                    else msg.reply = DAMAGE;
+                    
                     handle_reply(msg, &state);
 
                     state = ENEMY_MOVE;
-                    player_str.field[msg.v_coord][msg.h_coord] = ' ';
+                    player_str.field[msg.v_coord][msg.h_coord].cell = ' ';
+                    player_str.field[msg.v_coord][msg.h_coord].cell_number = -1;
                     break;
                 case ' ':
                     msg.reply = MISS;
@@ -112,7 +138,7 @@ int main(int argc, char *argv[]) {
             if (player_str.health == 0) {
                 msg.reply = LOOSE;
 
-                int send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
+                send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
                 if (send_status < 0) {
                     perror("send");
                     exit(EXIT_FAILURE);
@@ -125,7 +151,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
             }
 
-            int send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
+            send_status = send(sock_fd, (void *) &msg, sizeof(msg), 0);
             
             if (send_status < 0) {
                 perror("send");

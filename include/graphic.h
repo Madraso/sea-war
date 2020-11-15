@@ -19,7 +19,7 @@ void init_screen();
 void deinit_screen();
 void refresh_screen();
 void draw_fields();
-void place_ships(char [SIZE_FIELD_Y][SIZE_FIELD_Y]);
+void place_ships(struct field [SIZE_FIELD_Y][SIZE_FIELD_Y]);
 void set_move_state_label(enum move_state);
 void enter_coords(int *, int *);
 void enter_ship_param(struct player *, int);

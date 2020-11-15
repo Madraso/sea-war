@@ -6,7 +6,7 @@
 
 enum orientation { HORIZONTAL, VERTICAL };
 enum move_state { MY_MOVE = 1, ENEMY_MOVE };
-enum reply_state { DAMAGE, KILL, MISS, LOOSE };
+enum reply_state { DAMAGE, KILL, MISS, LOOSE, SHIPS_GEN };
 enum check_state { FAILED, SUCCESS };
 
 struct ship {
@@ -14,12 +14,18 @@ struct ship {
     int start_x;
     int start_y;
     int length;
+    int health;
+};
+
+struct field {
+    int cell_number;
+    char cell;
 };
 
 struct player {
     struct ship boat[10];
+    struct field field[FIELD_SIZE][FIELD_SIZE];
 	int health;
-	char field[FIELD_SIZE][FIELD_SIZE];
 };
 
 struct player_message {

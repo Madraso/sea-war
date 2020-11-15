@@ -44,10 +44,10 @@ void draw_fields() {
     refresh_screen();
 }
 
-void place_ships(char field[SIZE_FIELD_Y][SIZE_FIELD_Y]) {
+void place_ships(struct field field[SIZE_FIELD_Y][SIZE_FIELD_Y]) {
     for (int i = 0; i < SIZE_FIELD_Y; i++) {
         for (int j = 0; j < SIZE_FIELD_Y; j++) {
-            if (field[i][j] == '*') {
+            if (field[i][j].cell == '*') {
                 mvwaddstr(my_field, i, j * 3, SHIP);
             }
         }
@@ -64,14 +64,14 @@ void set_move_state_label(enum move_state state) {
     switch (state) {
         case MY_MOVE: {
             wattron(stdscr, COLOR_PAIR(MY_MOVE));
-            mvaddstr(max_y - 7, (max_x / 2) - 5, "Ваш ход");
+            mvaddstr(max_y - 7, (max_x / 2) - 4, "Ваш ход");
             wattroff(stdscr, COLOR_PAIR(MY_MOVE));
         } break;
         case ENEMY_MOVE: {
             wattron(stdscr, COLOR_PAIR(ENEMY_MOVE));
-            mvaddstr(max_y - 7, (max_x / 2) - 9, "Ход противника");
+            mvaddstr(max_y - 7, (max_x / 2) - 8, "Ход противника");
             wattroff(stdscr, COLOR_PAIR(ENEMY_MOVE));
-            mvaddstr(max_y - 5, (max_x / 2) - 9, "Ожидание ответа...");
+            mvaddstr(max_y - 5, (max_x / 2) - 8, "Ожидание ответа...");
         } break;
     }
 
@@ -223,6 +223,9 @@ void print_reply_label(enum reply_state rep) {
             break;
         case MISS:
             mvaddstr(max_y - 5, (max_x / 2) - 6, "Промахнулся!");
+            break;
+        case SHIPS_GEN:
+            mvaddstr(max_y - 5, (max_x / 2) - 23, "Ожидание генерации кораблей от второго игрока...");
             break;
     }
 
